@@ -423,11 +423,10 @@ if [ -f version ]; then
   ui_printfile version;
   ui_print " ";
 fi;
-ui_print "  _    _______    ___________ ";
-ui_print " | |  / /  _/ |  / /  _/__  / ";
-ui_print " | | / // / | | / // /   / /  ";
-ui_print " | |/ // /  | |/ // /   / /__ ";
-ui_print " |___/___/  |___/___/  /____/ ";
+ui_print "  ___  __  ______ ";
+ui_print " / _ \/ / / / __ \";
+ui_print "/  __/ /_/ / / / /";
+ui_print "\___/\__,_/_/ /_/ ";
 ui_print "    __ __ __________  _   __________ ";
 ui_print "   / //_// ____/ __ \/ | / / ____/ / ";
 ui_print "  / ,<  / __/ / /_/ /  |/ / __/ / /  ";

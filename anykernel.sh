@@ -4,61 +4,59 @@
 ## AnyKernel setup
 # begin properties
 properties() { '
-kernel.string=ViviZ-kernel for realme sdm710
-do.devicecheck=1
+kernel.string=eun kernel for Samsung m20lte
+do.devicecheck=0
 do.modules=0
 do.systemless=1
 do.cleanup=1
 do.cleanuponabort=0
-device.name1=RMX1971
-device.name2=RMX1851
+device.name1=
+device.name2=
 device.name3=
 device.name4=
 device.name5=
-supported.versions=
-supported.patchlevels=
+supported.versions=10-11-12
 '; } # end properties
-
-# shell variables
-block=/dev/block/by-name/boot;
-is_slot_device=0;
-ramdisk_compression=auto;
-
 
 ## AnyKernel methods (DO NOT CHANGE)
 # import patching functions/variables - see for reference
 . tools/ak3-core.sh;
 
-
-## AnyKernel file attributes
-# set permissions/ownership for included ramdisk files
-set_perm_recursive 0 0 755 644 $ramdisk/*;
-set_perm_recursive 0 0 750 750 $ramdisk/init* $ramdisk/sbin;
-
-
 ## AnyKernel install
 dump_boot;
 
-# begin ramdisk changes
+# mount system and vendor
+mount /system_root;
+mount -o rw,remount /vendor;
 
-# init.rc
-backup_file init.rc;
-replace_string init.rc "cpuctl cpu,timer_slack" "mount cgroup none /dev/cpuctl cpu" "mount cgroup none /dev/cpuctl cpu,timer_slack";
-
-# init.tuna.rc
-backup_file init.tuna.rc;
-insert_line init.tuna.rc "nodiratime barrier=0" after "mount_all /fstab.tuna" "\tmount ext4 /dev/block/platform/omap/omap_hsmmc.0/by-name/userdata /data remount nosuid nodev noatime nodiratime barrier=0";
-append_file init.tuna.rc "bootscript" init.tuna;
-
-# fstab.tuna
-backup_file fstab.tuna;
-patch_fstab fstab.tuna /system ext4 options "noatime,barrier=1" "noatime,nodiratime,barrier=0";
-patch_fstab fstab.tuna /cache ext4 options "barrier=1" "barrier=0,nomblk_io_submit";
-patch_fstab fstab.tuna /data ext4 options "data=ordered" "nomblk_io_submit,data=writeback";
-append_file fstab.tuna "usbdisk" fstab;
-
-# end ramdisk changes
+# Find device/rom and copy kernel
+device_name="$(grep ro.product.vendor.device /vendor/build.prop | cut -d'=' -f2)";
+if grep PDA /system_root/system/build.prop; then
+cp -f "$home/Image_$device_name-oneui" "$home/Image";
+else
+cp -f "$home/Image_$device_name" "$home/Image";
+fi
 
 write_boot;
-## end install
 
+echo "/dev/block/zram0 none swap defaults zramsize=50%,max_comp_streams=8" >/vendor/fstab.enableswap;
+echo "on boot
+    setprop ro.config.low_ram false
+    setprop ro.lmk.low 1001
+    setprop ro.lmk.medium 0
+    setprop ro.lmk.critical 0
+    setprop ro.lmk.critical_upgrade false
+    setprop ro.lmk.upgrade_pressure 100
+    setprop ro.lmk.downgrade_pressure 100
+    setprop ro.lmk.kill_heaviest_task true
+    setprop ro.lmk.kill_timeout_ms 100
+    setprop ro.lmk.use_minfree_levels true
+    setprop ro.lmk.log_stats true
+on property:sys.boot_completed=1
+    swapon_all /vendor/fstab.enableswap
+    write /proc/sys/vm/swappiness 100
+    write /proc/sys/vm/page-cluster 0" >/vendor/etc/init/swap.rc;
+chmod 644 /vendor/fstab.enableswap;
+chmod 644 /vendor/etc/init/swap.rc;
+
+## end install
