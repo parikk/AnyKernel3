@@ -4,16 +4,16 @@
 ## AnyKernel setup
 # begin properties
 properties() { '
-kernel.string=eun kernel for Samsung m20lte
+kernel.string=kernel for miatoll
 do.devicecheck=0
 do.modules=0
 do.systemless=1
 do.cleanup=1
 do.cleanuponabort=0
-device.name1=
-device.name2=
-device.name3=
-device.name4=
+device.name1=curtana
+device.name2=joyeuse
+device.name3=excalibur
+device.name4=miatoll
 device.name5=
 supported.versions=10-11-12
 '; } # end properties
