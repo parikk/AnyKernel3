@@ -4,17 +4,13 @@
 ## AnyKernel setup
 # begin properties
 properties() { '
-kernel.string=Meow for Samsung Galaxy M20 (m20lte)
+kernel.string=
 do.devicecheck=0
 do.modules=0
 do.systemless=1
 do.cleanup=1
 do.cleanuponabort=1
-device.name1=m20lte
-device.name2=M20
-device.name3=m20
-device.name4=M20LTE
-device.name5=
+device.name1=
 supported.versions=
 supported.patchlevels=
 '; } # end properties
